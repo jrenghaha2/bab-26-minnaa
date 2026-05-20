@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Minna no Nihongo – Bab 26 Offline Quiz</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0a0d14;
+            --surface: #111827;
+            --surface2: #1a2236;
+            --border: rgba(255,255,255,0.08);
+            --border-accent: rgba(99,102,241,0.35);
+            --indigo: #6366f1;
+            --indigo-light: #818cf8;
+            --indigo-dark: #4f46e5;
+            --emerald: #10b981;
+            --rose: #f43f5e;
+            --text: #f1f5f9;
+            --muted: #64748b;
+            --muted2: #94a3b8;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Plus Jakarta Sans', 'Noto Sans JP', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100dvh;
+            display: flex;
+            flex-direction: column;
+            -webkit-tap-highlight-color: transparent;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed; inset: 0;
+            background-image: radial-gradient(circle at 20% 20%, rgba(99,102,241,0.06) 0%, transparent 50%),
+                              radial-gradient(circle at 80% 80%, rgba(16,185,129,0.04) 0%, transparent 50%);
+            pointer-events: none; z-index: 0;
+        }
+
+        .japanese { font-family: 'Noto Sans JP', sans-serif; line-height: 1.9; }
+
+        header {
+            position: sticky; top: 0; z-index: 50;
+            background: rgba(10,13,20,0.85);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border);
+        }
+        .header-inner {
+            max-width: 680px; margin: 0 auto;
+            padding: 12px 16px;
+            display: flex; align-items: center; justify-content: space-between; gap: 12px;
+        }
+        .header-brand {
+            display: flex; align-items: center; gap: 10px;
+        }
+        .brand-badge {
+            background: linear-gradient(135deg, var(--indigo), var(--indigo-dark));
+            color: #fff; font-weight: 800; font-size: 14px;
+            width: 40px; height: 40px; border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 4px 12px rgba(99,102,241,0.4);
+            letter-spacing: -0.5px; flex-shrink: 0;
+        }
+        .brand-title { font-weight: 700; font-size: 15px; color: var(--text); line-height: 1.2; }
+        .brand-sub { font-size: 11px; color: var(--muted); margin-top: 1px; }
+        .brand-sub span { color: var(--indigo-light); font-weight: 600; }
+
+        .progress-chip {
+            background: var(--surface); border: 1px solid var(--border);
+            color: var(--muted2); font-size: 11px; font-weight: 600;
+            padding: 6px 12px; border-radius: 8px; white-space: nowrap; flex-shrink: 0;
+        }
+
+        main {
+            flex: 1; display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            padding: 20px 16px 32px;
+            max-width: 680px; width: 100%; margin: 0 auto;
+            position: relative; z-index: 1;
+        }
+
+        .screen { width: 100%; display: none; }
+        .screen.active { display: flex; flex-direction: column; }
+        #start-screen.active { display: flex; }
+        #score-screen.active { display: flex; align-items: center; }
+
+        #start-screen {
+            background: var(--surface);
+            border: 1px solid var(--border-accent);
+            border-radius: 20px;
+            padding: 32px 24px;
+            text-align: center;
+            gap: 20px;
+            box-shadow: 0 0 40px rgba(99,102,241,0.08), 0 8px 32px rgba(0,0,0,0.4);
+        }
+        .start-icon {
+            width: 64px; height: 64px;
+            background: linear-gradient(135deg, rgba(99,102,241,0.15), rgba(99,102,241,0.05));
+            border: 1px solid rgba(99,102,241,0.25);
+            border-radius: 50%; font-size: 28px;
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto;
+        }
+        .start-title { font-size: 22px; font-weight: 800; color: var(--text); }
+        .start-desc { font-size: 13px; color: var(--muted2); line-height: 1.7; margin-top: 6px; }
+
+        .tag-row { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+        .tag {
+            background: rgba(99,102,241,0.1); border: 1px solid rgba(99,102,241,0.2);
+            color: var(--indigo-light); font-size: 11px; font-weight: 600;
+            padding: 4px 10px; border-radius: 20px;
+        }
+
+        .btn-primary {
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            background: linear-gradient(135deg, var(--indigo), var(--indigo-dark));
+            color: #fff; font-weight: 700; font-size: 15px;
+            padding: 14px 24px; border-radius: 14px;
+            border: none; cursor: pointer; width: 100%;
+            transition: transform 0.15s, box-shadow 0.15s, filter 0.15s;
+            box-shadow: 0 4px 20px rgba(99,102,241,0.4);
+            touch-action: manipulation; letter-spacing: 0.2px;
+        }
+        .btn-primary:hover { filter: brightness(1.1); transform: translateY(-1px); box-shadow: 0 6px 28px rgba(99,102,241,0.5); }
+        .btn-primary:active { transform: translateY(0); filter: brightness(0.95); }
+        .btn-primary svg { width: 18px; height: 18px; flex-shrink: 0; }
+
+        #quiz-container { gap: 14px; }
+
+        .progress-wrap {
+            background: var(--surface2); border-radius: 99px; height: 5px;
+            border: 1px solid var(--border); overflow: hidden;
+        }
+        #progress-bar-fill {
+            height: 100%; border-radius: 99px;
+            background: linear-gradient(90deg, var(--indigo), var(--indigo-light));
+            transition: width 0.5s cubic-bezier(0.4,0,0.2,1);
+            width: 0%;
+        }
+
+        .quiz-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 18px; padding: 20px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.3);
+        }
+
+        .context-label {
+            display: inline-block;
+            background: rgba(99,102,241,0.12); border: 1px solid rgba(99,102,241,0.2);
+            color: var(--indigo-light); font-size: 10px; font-weight: 700;
+            letter-spacing: 0.08em; text-transform: uppercase;
+            padding: 3px 9px; border-radius: 6px; margin-bottom: 8px;
+        }
+        #quiz-context {
+            font-size: 13px; color: var(--muted2); line-height: 1.7;
+            padding-bottom: 14px; border-bottom: 1px solid var(--border);
+            margin-bottom: 14px;
+        }
+
+        .dialogue-wrap {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 12px; padding: 14px 16px; margin-bottom: 16px;
+        }
+        .dialogue-hint { font-size: 10px; color: var(--muted); margin-bottom: 10px; font-weight: 500; }
+        #quiz-dialogue { font-size: 17px; font-weight: 600; line-height: 1.9; color: var(--text); }
+
+        #quiz-options { display: flex; flex-direction: column; gap: 9px; }
+        .opt-btn {
+            width: 100%; text-align: left;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            padding: 12px 14px; border-radius: 12px;
+            display: flex; align-items: center; gap: 12px;
+            cursor: pointer; transition: all 0.15s; touch-action: manipulation;
+            color: var(--text);
+        }
+        .opt-btn:hover:not(:disabled) {
+            background: rgba(99,102,241,0.1); border-color: rgba(99,102,241,0.35);
+        }
+        .opt-btn:disabled { cursor: default; }
+        .opt-label {
+            width: 28px; height: 28px; border-radius: 7px;
+            background: rgba(255,255,255,0.07); flex-shrink: 0;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 12px; font-weight: 700; color: var(--muted2);
+            transition: background 0.15s, color 0.15s; font-family: monospace;
+        }
+        .opt-btn:hover:not(:disabled) .opt-label { background: var(--indigo); color: #fff; }
+        .opt-text { font-size: 14px; font-weight: 500; flex: 1; line-height: 1.5; }
+        .opt-status { font-size: 18px; flex-shrink: 0; opacity: 0; transition: opacity 0.2s; }
+        .opt-status.show { opacity: 1; }
+
+        .opt-btn.correct { background: rgba(16,185,129,0.1); border-color: rgba(16,185,129,0.5); }
+        .opt-btn.correct .opt-label { background: var(--emerald); color: #fff; }
+        .opt-btn.wrong { background: rgba(244,63,94,0.1); border-color: rgba(244,63,94,0.4); }
+        .opt-btn.wrong .opt-label { background: var(--rose); color: #fff; }
+        .opt-btn.show-correct { background: rgba(16,185,129,0.06); border-color: rgba(16,185,129,0.3); }
+
+        #explanation-box {
+            display: none;
+            margin-top: 16px; padding-top: 14px;
+            border-top: 1px solid var(--border);
+            gap: 8px; flex-direction: column;
+            animation: fadeUp 0.3s ease;
+        }
+        #explanation-box.show { display: flex; }
+        @keyframes fadeUp { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
+        #explanation-title { font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 6px; }
+        #explanation-text {
+            font-size: 12px; color: var(--muted2); line-height: 1.75;
+            background: var(--bg); padding: 12px 14px;
+            border-radius: 10px; border: 1px solid var(--border);
+        }
+
+        #btn-next { display: none; animation: fadeUp 0.25s ease; }
+        #btn-next.show { display: flex; }
+
+        #score-screen { flex-direction: column; gap: 0; justify-content: center; padding: 20px 0; }
+        .score-card {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: 20px; padding: 28px 24px; width: 100%;
+            text-align: center; gap: 0;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+        }
+        .score-title { font-size: 20px; font-weight: 800; color: var(--text); }
+        .score-sub { font-size: 12px; color: var(--muted); margin-top: 4px; margin-bottom: 24px; }
+        .score-ring-wrap { display: flex; justify-content: center; margin-bottom: 20px; }
+        .score-ring {
+            width: 110px; height: 110px; border-radius: 50%;
+            background: var(--bg);
+            border: 6px solid var(--surface2);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            box-shadow: inset 0 2px 8px rgba(0,0,0,0.4);
+            position: relative;
+        }
+        #final-score-number { font-size: 36px; font-weight: 900; color: var(--indigo-light); line-height: 1; }
+        .score-out { font-size: 10px; color: var(--muted); font-weight: 600; margin-top: 3px; }
+        #score-message { font-size: 14px; font-weight: 600; margin-bottom: 20px; }
+
+        #review-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; text-align: left; }
+        .review-item {
+            background: var(--surface2); border: 1px solid var(--border);
+            border-radius: 10px; padding: 10px 12px;
+            display: flex; align-items: flex-start; gap: 10px;
+        }
+        .review-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+        .review-text { font-size: 11px; color: var(--muted2); line-height: 1.6; }
+        .review-text strong { color: var(--text); font-weight: 600; }
+
+        @media (min-width: 480px) {
+            #start-screen { padding: 40px 36px; }
+            .quiz-card { padding: 28px; }
+            .start-title { font-size: 24px; }
+            #quiz-dialogue { font-size: 20px; }
+            .opt-text { font-size: 16px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-inner">
+            <div class="header-brand">
+                <div class="brand-badge">N26</div>
+                <div>
+                    <div class="brand-title">Minna no Nihongo</div>
+                    <div class="brand-sub">Evaluasi Bab 26: <span>~んです</span></div>
+                </div>
+            </div>
+            <div class="progress-chip" id="quiz-progress-text">Siap</div>
+        </div>
+    </header>
+
+    <main>
+        <!-- Start Screen -->
+        <div id="start-screen" class="screen active">
+            <div class="start-icon">🎌</div>
+            <div>
+                <div class="start-title">Kuis Interaktif Bab 26</div>
+                <div class="start-desc">Uji pemahaman Anda tentang pola tata bahasa <strong>~んです</strong>, <strong>~んですが</strong>, dan <strong>~たらいいですか</strong> secara instan tanpa loading.</div>
+            </div>
+            <div class="tag-row">
+                <span class="tag">10 Soal</span>
+                <span class="tag">Pilihan Ganda</span>
+                <span class="tag">Offline / Tanpa API</span>
+            </div>
+            <button type="button" id="btn-start" class="btn-primary">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                Mulai Kuis Sekarang
+            </button>
+        </div>
+
+        <!-- Quiz Container -->
+        <div id="quiz-container" class="screen" style="gap:14px;">
+            <div class="progress-wrap"><div id="progress-bar-fill"></div></div>
+            <div class="quiz-card">
+                <div class="context-label">Konteks / Situasi</div>
+                <p id="quiz-context">Loading...</p>
+                <div class="dialogue-wrap">
+                    <div class="dialogue-hint">Lengkapi percakapan berikut:</div>
+                    <div id="quiz-dialogue" class="japanese"></div>
+                </div>
+                <div id="quiz-options"></div>
+                <div id="explanation-box">
+                    <div id="explanation-title"></div>
+                    <p id="explanation-text" class="japanese"></p>
+                </div>
+            </div>
+            <button type="button" id="btn-next" class="btn-primary">
+                <span id="btn-next-text">Lanjut ke Soal 2</span>
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+            </button>
+        </div>
+
+        <!-- Score Screen -->
+        <div id="score-screen" class="screen">
+            <div class="score-card">
+                <div class="score-title">Kuis Selesai! 🎉</div>
+                <div class="score-sub">Hasil evaluasi materi Bab 26 Minna no Nihongo</div>
+                <div class="score-ring-wrap">
+                    <div class="score-ring">
+                        <span id="final-score-number">0</span>
+                        <span class="score-out">dari 100</span>
+                    </div>
+                </div>
+                <div id="score-message"></div>
+                <div id="review-list"></div>
+                <button type="button" id="btn-home" class="btn-primary">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                    Ulangi Kuis
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // HARDCODED DATABASE: 10 Soal Bab 26 Minna no Nihongo
+            // Tidak perlu lagi memanggil API, 100% stabil, tidak akan error 429 atau 404
+            const quizDatabase = [
+                {
+                    context: "Menjelaskan alasan keterlambatan karena bus tidak datang.",
+                    dialogue: "A: 田中さん、遅いですね。どうしたんですか。\nB: すみません。バスが（　　　　）。",
+                    options: ["来なかったんです", "来ませんんです", "来ないんです", "来なかったです"],
+                    correctIndex: 0,
+                    explanation: "Untuk menjelaskan alasan, gunakan bentuk biasa (普通形) + んです. Bentuk biasa lampau negatif dari 来ます (datang) adalah 来なかった."
+                },
+                {
+                    context: "Meminta saran cara pergi ke suatu tempat.",
+                    dialogue: "A: 国会議事堂へ（　　　　）、どうやって 行ったら いいですか。\nB: 地下鉄が 便利ですよ。",
+                    options: ["行きたいんですが", "行きたいです", "行きたいんですか", "行きますが"],
+                    correctIndex: 0,
+                    explanation: "Pola ～んですが digunakan sebagai pengantar topik sebelum bertanya atau meminta bantuan. Kata kerja bentuk -tai diperlakukan seperti kata sifat-i."
+                },
+                {
+                    context: "Mengkonfirmasi asumsi berdasarkan apa yang dilihat (Kamera bagus).",
+                    dialogue: "A: いい カメラですね。日本で（　　　　）。\nB: ええ、東京で 買いました。",
+                    options: ["買うんですか", "買ったんですか", "買ったんです", "買いましたか"],
+                    correctIndex: 1,
+                    explanation: "Untuk mengkonfirmasi sesuatu yang dilihat/dirasakan, gunakan bentuk biasa lampau + んですか. 'Katta n desu ka?' berarti 'Apakah kamu membelinya (di Jepang)?'."
+                },
+                {
+                    context: "Menjelaskan alasan tidak makan sayur karena tidak suka.",
+                    dialogue: "A: どうして 野菜を 食べないんですか。\nB: 野菜が（　　　　）。",
+                    options: ["嫌いなんです", "嫌いだんです", "嫌いんです", "嫌いななんです"],
+                    correctIndex: 0,
+                    explanation: "嫌い (kirai) adalah kata sifat-na. Sebelum んです, akhiran 'da' pada kata sifat-na (dan juga kata benda) harus diubah menjadi 'na', sehingga menjadi 嫌いなんです."
+                },
+                {
+                    context: "Menjelaskan keadaan penyakit yang diderita.",
+                    dialogue: "A: 病気ですか。\nB: いいえ、ただの 風邪（　　　　）。",
+                    options: ["ななんです", "だんです", "なんです", "です"],
+                    correctIndex: 2,
+                    explanation: "風邪 (kaze) adalah kata benda. Sama seperti aturan kata sifat-na, kata benda harus ditambahkan partikel 'na' sebelum んです menjadi 風邪なんです."
+                },
+                {
+                    context: "Meminta tolong dengan sangat sopan untuk memeriksa surat.",
+                    dialogue: "A: 日本語で 手紙を 書いたんですが、ちょっと（　　　　）。\nB: ええ、いいですよ。",
+                    options: ["見ませんか", "見て くれません", "見ましょうか", "見て いただけませんか"],
+                    correctIndex: 3,
+                    explanation: "Pola ～て いただけませんか adalah ungkapan yang sangat sopan untuk meminta bantuan seseorang melakukan sesuatu untuk kita."
+                },
+                {
+                    context: "Meminta instruksi/saran di mana sebaiknya membuang sampah.",
+                    dialogue: "A: どこに ゴミを（　　　　）いいですか。\nB: あそこですよ。",
+                    options: ["出して", "出したら", "出すと", "出せば"],
+                    correctIndex: 1,
+                    explanation: "Pola ～たらいいですか (Kata kerja bentuk -ta + ra ii desu ka) dipelajari di Bab 26 secara khusus untuk meminta saran atau instruksi."
+                },
+                {
+                    context: "Menjelaskan alasan lampau (kemarin libur karena sakit perut).",
+                    dialogue: "A: どうして 昨日 休んだんですか。\nB: おなかが（　　　　）。",
+                    options: ["痛いんです", "痛かったんですか", "痛かったです", "痛かったんです"],
+                    correctIndex: 3,
+                    explanation: "Karena kejadiannya kemarin (lampau), kata sifat-i 痛い (itai) harus diubah terlebih dahulu ke bentuk lampau biasa menjadi 痛かった, lalu ditambah んです."
+                },
+                {
+                    context: "Menanyakan alasan/keterangan dengan bentuk kata kerja sedang berlangsung.",
+                    dialogue: "A: 雨が（　　　　）。\nB: ええ。じゃ、タクシーで 帰りましょう。",
+                    options: ["降っているんですか", "降るんですか", "降ったんですか", "降ってんですか"],
+                    correctIndex: 0,
+                    explanation: "A melihat keadaan B dan bertanya mengkonfirmasi (Apakah sedang turun hujan?). Bentuk biasa dari 降っています adalah 降っている + んですか."
+                },
+                {
+                    context: "Meminta saran waktu yang tepat untuk pergi.",
+                    dialogue: "A: 市役所へ 行きたいんですが、いつ（　　　　）いいですか。\nB: 平日が いいと 思いますよ。",
+                    options: ["行ったら", "行って", "行くと", "行けば"],
+                    correctIndex: 0,
+                    explanation: "Menggunakan pola saran ~tara ii desu ka. Menggunakan kata kerja 行きます diubah ke bentuk ta -> 行った + ら."
+                }
+            ];
+
+            // Mengacak (Shuffle) array soal agar tidak selalu urut 1-10
+            function shuffleArray(array) {
+                for (let i = array.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [array[i], array[j]] = [array[j], array[i]];
+                }
+                return array;
+            }
+
+            let currentQuestions = [];
+            let currentQuestionIndex = 0;
+            let sessionScore = 0;
+            let isAnswered = false;
+            let answeredCorrectly = [];
+
+            const screens = {
+                start:   document.getElementById('start-screen'),
+                quiz:    document.getElementById('quiz-container'),
+                score:   document.getElementById('score-screen'),
+            };
+            
+            const els = {
+                btnStart:     document.getElementById('btn-start'),
+                btnNext:      document.getElementById('btn-next'),
+                btnHome:      document.getElementById('btn-home'),
+                progressText: document.getElementById('quiz-progress-text'),
+                progressFill: document.getElementById('progress-bar-fill'),
+                context:      document.getElementById('quiz-context'),
+                dialogue:     document.getElementById('quiz-dialogue'),
+                options:      document.getElementById('quiz-options'),
+                expBox:       document.getElementById('explanation-box'),
+                expTitle:     document.getElementById('explanation-title'),
+                expText:      document.getElementById('explanation-text'),
+                btnNextText:  document.getElementById('btn-next-text'),
+            };
+
+            function showScreen(name) {
+                Object.values(screens).forEach(el => {
+                    el.classList.remove('active');
+                    el.style.display = ''; 
+                });
+                if (screens[name]) {
+                    screens[name].classList.add('active');
+                }
+            }
+
+            els.btnStart.addEventListener('click', startQuiz);
+            els.btnNext.addEventListener('click', handleNextAction);
+            els.btnHome.addEventListener('click', resetAndGoHome);
+
+            function startQuiz() {
+                // Siapkan 10 soal (sudah diacak urutannya)
+                currentQuestions = shuffleArray([...quizDatabase]);
+                
+                // Acak posisi pilihan jawaban untuk masing-masing soal
+                currentQuestions = currentQuestions.map(q => {
+                    const correctAnswerText = q.options[q.correctIndex];
+                    let shuffledOptions = shuffleArray([...q.options]);
+                    let newCorrectIndex = shuffledOptions.indexOf(correctAnswerText);
+                    
+                    return {
+                        ...q,
+                        options: shuffledOptions,
+                        correctIndex: newCorrectIndex
+                    };
+                });
+
+                currentQuestionIndex = 0;
+                sessionScore = 0;
+                answeredCorrectly = new Array(currentQuestions.length).fill(null);
+                
+                showScreen('quiz');
+                renderCurrentQuestion();
+            }
+
+            function renderCurrentQuestion() {
+                isAnswered = false;
+                els.expBox.classList.remove('show');
+                els.btnNext.classList.remove('show');
+
+                const q = currentQuestions[currentQuestionIndex];
+                const num = currentQuestionIndex + 1;
+                const total = currentQuestions.length;
+
+                els.progressText.textContent = `Soal ${num} / ${total}`;
+                els.progressFill.style.width = `${((num - 1) / total) * 100}%`;
+                els.btnNextText.textContent = (num === total) ? "Selesaikan & Lihat Skor" : `Lanjut ke Soal ${num + 1}`;
+
+                els.context.textContent = q.context;
+
+                let dlg = q.dialogue
+                    .replace(/\\n|\n/g, '</div><div class="mt-2">')
+                    .replace(/A:/g, '<strong style="color:#818cf8">A:</strong>')
+                    .replace(/B:/g, '<strong style="color:#34d399">B:</strong>');
+                els.dialogue.innerHTML = `<div class="mt-1">${dlg}</div>`;
+
+                els.options.innerHTML = '';
+                q.options.forEach((opt, i) => {
+                    const btn = document.createElement('button');
+                    btn.type = 'button';
+                    btn.className = 'opt-btn';
+                    btn.innerHTML = `
+                        <span class="opt-label">${String.fromCharCode(65+i)}</span>
+                        <span class="opt-text japanese">${opt}</span>
+                        <span class="opt-status" id="status-${i}"></span>
+                    `;
+                    btn.addEventListener('click', () => selectOption(i, btn));
+                    els.options.appendChild(btn);
+                });
+            }
+
+            function selectOption(selectedIdx, element) {
+                if (isAnswered) return;
+                isAnswered = true;
+
+                const q = currentQuestions[currentQuestionIndex];
+                const correctIdx = q.correctIndex;
+                const allBtns = els.options.querySelectorAll('.opt-btn');
+                const isCorrect = selectedIdx === correctIdx;
+
+                answeredCorrectly[currentQuestionIndex] = isCorrect;
+
+                if (isCorrect) {
+                    element.classList.add('correct');
+                    element.querySelector('.opt-status').textContent = '🎉';
+                    element.querySelector('.opt-status').classList.add('show');
+                    sessionScore += 100 / currentQuestions.length;
+                } else {
+                    element.classList.add('wrong');
+                    element.querySelector('.opt-status').textContent = '✕';
+                    element.querySelector('.opt-status').classList.add('show');
+                    allBtns[correctIdx].classList.add('show-correct');
+                    const correctStatus = allBtns[correctIdx].querySelector('.opt-status');
+                    correctStatus.textContent = '✓';
+                    correctStatus.classList.add('show');
+                }
+
+                allBtns.forEach(b => { b.disabled = true; });
+                showExplanation(isCorrect, q.explanation);
+                els.btnNext.classList.add('show');
+                setTimeout(() => els.btnNext.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 150);
+            }
+
+            function showExplanation(isCorrect, text) {
+                els.expTitle.innerHTML = isCorrect
+                    ? `<span style="color:#10b981">🎉 正解！ (Benar)</span>`
+                    : `<span style="color:#f43f5e">✕ 不正解 (Kurang Tepat)</span>`;
+                els.expText.textContent = text;
+                els.expBox.classList.add('show');
+            }
+
+            function handleNextAction() {
+                if (currentQuestionIndex < currentQuestions.length - 1) {
+                    currentQuestionIndex++;
+                    renderCurrentQuestion();
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                } else {
+                    showFinalScore();
+                }
+            }
+
+            function showFinalScore() {
+                showScreen('score');
+                els.progressText.textContent = "Selesai ✓";
+                els.progressFill.style.width = '100%';
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+
+                const finalScore = Math.round(sessionScore);
+                document.getElementById('final-score-number').textContent = finalScore;
+
+                const ring = document.querySelector('.score-ring');
+                if (finalScore === 100) ring.style.borderColor = 'rgba(16,185,129,0.6)';
+                else if (finalScore >= 60) ring.style.borderColor = 'rgba(99,102,241,0.5)';
+                else ring.style.borderColor = 'rgba(244,63,94,0.4)';
+
+                const msgEl = document.getElementById('score-message');
+                if (finalScore === 100) {
+                    msgEl.textContent = "Sempurna! Penguasaan pola ~んです Anda sangat mantap. 🌟";
+                    msgEl.style.color = '#10b981';
+                } else if (finalScore >= 80) {
+                    msgEl.textContent = "Kerja bagus! Anda sudah menguasai materi ini dengan baik. 👍";
+                    msgEl.style.color = '#818cf8';
+                } else if (finalScore >= 60) {
+                    msgEl.textContent = "Cukup baik. Pelajari lagi bagian yang kurang tepat ya! 📚";
+                    msgEl.style.color = '#fbbf24';
+                } else {
+                    msgEl.textContent = "Jangan menyerah! Ayo ulangi dan berlatih kembali. 💪";
+                    msgEl.style.color = '#f43f5e';
+                }
+
+                const reviewList = document.getElementById('review-list');
+                reviewList.innerHTML = '';
+                currentQuestions.forEach((q, i) => {
+                    const ok = answeredCorrectly[i];
+                    const item = document.createElement('div');
+                    item.className = 'review-item';
+                    item.innerHTML = `
+                        <div class="review-icon">${ok ? '🟢' : '🔴'}</div>
+                        <div class="review-text">
+                            <strong>Soal ${i+1}:</strong> ${q.context}
+                        </div>
+                    `;
+                    reviewList.appendChild(item);
+                });
+            }
+
+            function resetAndGoHome() {
+                els.progressText.textContent = "Siap";
+                els.progressFill.style.width = '0%';
+                showScreen('start');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        });
+    </script>
+</body>
+</html>
